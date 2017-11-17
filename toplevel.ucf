@@ -1,0 +1,29 @@
+
+
+NET "led_l_sin[1]" LOC = P2; //m101 test point
+NET "led_l_sin[2]" LOC = P3;
+NET "led_l_sin[3]" LOC = P4;
+NET "led_l_sin[4]" LOC = P5;
+NET "led_l_sin[5]" LOC = P7;	//not confirmed may be wrong
+NET "led_l_sin[6]" LOC = P8;	//not confirmed may be wrong
+NET "led_r_sin[1]" LOC = P14;	//not confirmed may be wrong
+NET "led_r_sin[2]" LOC = P15;	//not confirmed may be wrong
+NET "led_r_sin[3]" LOC = P16;	//not confirmed may be wrong
+NET "led_r_sin[4]" LOC = P17;	//not confirmed may be wrong
+NET "led_r_sin[5]" LOC = P20;	//not confirmed may be wrong
+NET "led_r_sin[6]" LOC = P21;	//not confirmed may be wrong
+NET "led_sclk" LOC = P139;
+NET "led_mode" LOC = P33; //P32;	//m104 tp
+NET "led_xlat" LOC = P32; //thanks modder_mike! P33; //m103 test point
+NET "led_blank" LOC = P34;	//m105 tp
+NET "led_xerr" LOC=P10;	
+NET "led_cal_sin" LOC=P22;
+
+NET "led_gsclk" LOC = P140;
+NET "clock" LOC = P56;   //40mhz xtal on board
+NET "clock" IOSTANDARD = LVCMOS25;
+
+NET "status_orange" LOC = P71;
+NET "status_yellow" LOC = P60;
+NET "status_red"    LOC = P62;
+
