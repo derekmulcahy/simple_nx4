@@ -12,11 +12,8 @@ module pixeldriver(
     output reg led_blank = 0,
     output reg led_xlat = 0,
     output led_gsclk,
-    input pixel_clock,
-    output reg [7:0] frame_count = 0
+    output frame_pulse
   );
-
-	reg [11:0] blanking_clock = 0;
 
 	// 16 x 12 bit words per driver (3 drivers in series, each 16ch; one R,G,B),
   // so 16*12*3=576 bits per 16-wide column (two columns in parallel)
@@ -26,11 +23,20 @@ module pixeldriver(
 	// blanking 0=unblanked, we have to clock a 1 every 4096 greyscale_clocks
 	// gsclk is reference clock for pwm grayscale
 
+  reg [7:0] frame_count = 0;
 	reg [5:0]  word_count = 0;	// 48 words per line (3x16)
 	reg [3:0]  bit_count  = 0;  // 12 bits per word
 	reg [2:0]  row_count  = 0;
   reg [11:0] dotadjust_test = 7;
 	reg [11:0] pixels[0:((16*3)*2)-1];
+  reg [5:0] counter = 0;
+
+  assign led_sclk = counter[5];
+  assign led_gsclk = counter[2];
+  assign frame_pulse = frame_count[7];
+
+  assign gsclk_strobe = &counter[2:0];
+  assign sclk_strobe = &counter[5:0];
 
 	integer i;
 
@@ -43,35 +49,37 @@ module pixeldriver(
 	//if loading dot correct data or pixels
 	wire [3:0] bits_per_word=(led_mode ? (6-1) : (12-1));
 
-	always @(negedge pixel_clock)
+	always @(posedge clock)
 	begin
-   //counts down
-    if (bit_count== 0 ) begin
-      bit_count <= bits_per_word;
+    if (sclk_strobe) begin
+      //counts down
+      if (bit_count== 0 ) begin
+        bit_count <= bits_per_word;
 
-      //16 pixels, each r,g,b
-      if (word_count == (16*3)-1) begin
+        //16 pixels, each r,g,b
+        if (word_count == (16*3)-1) begin
 
-        led_xlat <= 1;	//latch row
+          led_xlat <= 1;	//latch row
 
-        if (led_mode==1) begin
-          led_mode<=0;	//switch (permanently) from loading dot correct to grayscale after first line of sending it - normally you'd reload dot correct for each line as they're all different
+          if (led_mode==1) begin
+            led_mode<=0;	//switch (permanently) from loading dot correct to grayscale after first line of sending it - normally you'd reload dot correct for each line as they're all different
+          end
+
+          word_count<=0;
+
+          if (row_count==6-1) begin
+            row_count<=0;
+            frame_count<=frame_count+1;
+            pixels[(16*3)-1]<=pixels[(16*3)-1]+8;
+          end else
+            row_count <= row_count+1;
+        end else begin
+          word_count <= word_count+1;
         end
-
-        word_count<=0;
-
-        if (row_count==6-1) begin
-          row_count<=0;
-          frame_count<=frame_count+1;
-          pixels[(16*3)-1]<=pixels[(16*3)-1]+8;
-        end else
-          row_count <= row_count+1;
       end else begin
-        word_count <= word_count+1;
+        bit_count <= bit_count-1;
+        led_xlat <= 0;
       end
-    end else begin
-      bit_count <= bit_count-1;
-      led_xlat <= 0;
     end
 
     begin: Serialize
@@ -93,18 +101,13 @@ module pixeldriver(
     end
   end
 
-  reg [2:0] counter = 0;
-
-  assign led_sclk = pixel_clock;
-  assign led_gsclk = counter[2];
-
-  assign gclock_strobe = &counter;
+	reg [11:0] blanking_clock = 0;
 
 	always @(posedge clock)
 	begin
     counter <= counter+1;
 
-    if (gclock_strobe) begin
+    if (gsclk_strobe) begin
 	    blanking_clock <= blanking_clock+1;
 		  led_blank <= (blanking_clock==0);
     end

@@ -15,8 +15,7 @@ module toplevel(
     output status_red
   );
 
-	reg pclock = 0;
-	wire [7:0] frame_count;
+	wire  frame_pulse;
 
   pixeldriver driver (
     .clock(clock),
@@ -28,20 +27,11 @@ module toplevel(
     .led_blank(led_blank),
     .led_xlat(led_xlat),
     .led_gsclk(led_gsclk),
-    .pixel_clock(pclock),
-    .frame_count(frame_count)
+    .frame_pulse(frame_pulse)
   );
 
-	reg [24:0] blink_count = 0;
-
-	assign status_yellow = frame_count[7];
-	assign status_orange = blink_count[24];
+	assign status_yellow = frame_pulse;
+	assign status_orange = 0;
   assign status_red    = led_xerr;
-
-	always @(posedge clock)
-	begin
-    blink_count <= blink_count+1;
-		pclock      <= blink_count[5]; // pixel clock is /(1<<5)
-	end
 
 endmodule
