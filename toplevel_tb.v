@@ -37,7 +37,7 @@ module toplevel_tb;
 	);
   
   always
-    #25 clock = !clock;
+    #12.5 clock = !clock;
 
 	initial begin
 		// Initialize Inputs
