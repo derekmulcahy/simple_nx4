@@ -10,6 +10,7 @@ module toplevel(
     output led_blank,
     output led_xlat,
     output led_gsclk,
+    output cpld_p8,
     output status_yellow,
     output status_orange,
     output status_red
@@ -33,5 +34,5 @@ module toplevel(
 	assign status_yellow = frame_pulse;
 	assign status_orange = 0;
   assign status_red    = led_xerr;
-
+  assign cpld_p8       = led_blank;
 endmodule

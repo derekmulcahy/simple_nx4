@@ -28,3 +28,5 @@ NET "status_yellow" LOC = P60;
 NET "status_red"    LOC = P62;
 
 SYSTEM_JITTER = 300 ps;
+
+NET "cpld_p8"       LOC = P123;
