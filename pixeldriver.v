@@ -8,7 +8,7 @@ module pixeldriver(
     output reg [6:1] led_l_sin = 0,
     output reg [6:1] led_r_sin = 0,
     output reg led_cal_sin = 0,
-    output reg led_mode = 0,
+    output reg led_mode = 1,
     output reg led_blank = 0,
     output reg led_xlat = 0,
     output led_gsclk,
@@ -25,10 +25,10 @@ module pixeldriver(
 
   reg [7:0] frame_count = 0;
 	reg [5:0]  word_count = 0;	// 48 words per line (3x16)
-	reg [3:0]  bit_count  = 0;  // 12 bits per word
+	reg [3:0]  bit_count  = 5;  // 12 bits per word
 	reg [2:0]  row_count  = 0;
   reg [11:0] dotadjust_test = 7;
-	reg [11:0] pixels[0:((16*3)*2)-1];
+	reg [11:0] pixels[0:47];
   reg [5:0] counter = 0;
 
   assign led_sclk = counter[5];
@@ -38,16 +38,18 @@ module pixeldriver(
   assign gsclk_strobe = &counter[2:0];
   assign sclk_strobe = &counter[5:0];
 
-	integer i;
+	integer j;
 
   initial begin
-    for(i=0; i<=(((16*3)*2)-1); i=i+1) begin
-      pixels[i] <= 0;
+    for(j=0; j<=47; j=j+1) begin
+      pixels[j] <= 0;
     end
   end
 
+	integer i = 0;
+
 	//if loading dot correct data or pixels
-	wire [3:0] bits_per_word=(led_mode ? (6-1) : (12-1));
+	wire [3:0] bits_per_word=(led_mode ? 5 : 11);
 
 	always @(posedge clock)
 	begin
@@ -57,7 +59,7 @@ module pixeldriver(
         bit_count <= bits_per_word;
 
         //16 pixels, each r,g,b
-        if (word_count == (16*3)-1) begin
+        if (word_count == 47) begin
 
           led_xlat <= 1;	//latch row
 
@@ -70,7 +72,6 @@ module pixeldriver(
           if (row_count==6-1) begin
             row_count<=0;
             frame_count<=frame_count+1;
-            pixels[(16*3)-1]<=pixels[(16*3)-1]+8;
           end else
             row_count <= row_count+1;
         end else begin
@@ -80,9 +81,7 @@ module pixeldriver(
         bit_count <= bit_count-1;
         led_xlat <= 0;
       end
-    end
 
-    begin: Serialize
       if (led_mode==0) begin
         //12 bit pixels
         if (word_count[5:0]==frame_count[5:0]) begin
