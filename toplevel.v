@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+
 module toplevel(
     input clock,
     output led_sclk,
@@ -16,8 +17,6 @@ module toplevel(
     output status_red
   );
 
-	wire  frame_pulse;
-
   pixeldriver driver (
     .clock(clock),
     .led_sclk(led_sclk),
@@ -27,12 +26,21 @@ module toplevel(
     .led_mode(led_mode),
     .led_blank(led_blank),
     .led_xlat(led_xlat),
-    .led_gsclk(led_gsclk),
-    .frame_pulse(frame_pulse)
+    .led_gsclk(led_gsclk)
   );
 
-	assign status_yellow = frame_pulse;
+  reg blank_previous    = 0;
+  reg [9:0] blank_count = 0;
+
+	assign status_yellow = blank_count[9];
 	assign status_orange = 0;
   assign status_red    = led_xerr;
   assign cpld_p8       = led_blank;
+
+  always @(posedge clock) begin
+    blank_previous <= led_blank;
+    if (!blank_previous && led_blank) begin
+        blank_count <= blank_count + 1;
+    end
+  end
 endmodule

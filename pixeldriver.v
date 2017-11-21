@@ -11,8 +11,7 @@ module pixeldriver(
     output led_mode,
     output led_blank,
     output reg led_xlat = 0,
-    output led_gsclk,
-    output frame_pulse
+    output led_gsclk
   );
 
 	// 16 x 12 bit words per driver (3 drivers in series, each 16ch; one R,G,B),
@@ -23,7 +22,7 @@ module pixeldriver(
 	// blanking 0=unblanked, we have to clock a 1 every 4096 greyscale_clocks
 	// gsclk is reference clock for pwm grayscale
 
-  reg [7:0]  frame_count = 0;      // a frame is 12 bits x 48 words x 6 rows
+  reg [5:0]  frame_count = 0;      // a frame is 12 bits x 48 words x 6 rows
 	reg [5:0]  word_count  = 0;	     // 48 words per line (3x16)
 	reg [3:0]  bit_count   = 0;      // 12 bits per word
 	reg [2:0]  row_count   = 0;      // 6 rows per frame
@@ -35,7 +34,6 @@ module pixeldriver(
   assign sclk_strobe  = counter[5:0] == 0;
   assign led_gsclk    = counter[2];
   assign gsclk_strobe = counter[2:0] == 0;
-  assign frame_pulse  = frame_count[7];
 	assign led_blank    = gsclk_count == 0;
   assign pixel        = word_count[5:0] == frame_count[5:0];
   assign led_l_sin    = {6{pixel}};
