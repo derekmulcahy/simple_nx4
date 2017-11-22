@@ -29,4 +29,12 @@ NET "status_red"    LOC = P62;
 
 SYSTEM_JITTER = 300 ps;
 
-NET "cpld_p8"       LOC = P123;
+#NET "cpld_p2"       LOC=P125; # - CLK: User I/O, input, or global buffer input
+#NET "cpld_p3"       LOC=P124; # - VREF: User I/O or input voltage reference for bank
+#NET "cpld_p5"       LOC=P126; # - CLK: User I/O, input, or global buffer input
+#NET "cpld_p6"       LOC = P24;  # m102 - led_l_sout[1] - INPUT: Unrestricted, general-purpose input pin
+NET "cpld_p8"       LOC = P123; # CPLD watchdog - CLK: User I/O, input, or global buffer input
+#NET "cpld_p41"      LOC=P143; # - DUAL: Configuration pin, then possible user I/O
+#NET "cpld_p42"      LOC=P142; # - I/O: Unrestricted, general-purpose user I/O
+#NET "cpld_p43"      LOC=P132; # - I/O: Unrestricted, general-purpose user I/O
+#NET "cpld_p44"      LOC=P23;  # - CLK: User I/O, input, or global buffer input
