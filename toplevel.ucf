@@ -15,7 +15,7 @@ NET "led_xlat"      LOC = P32;  # m103
 NET "led_blank"     LOC = P34;  # m105
 NET "led_sclk"      LOC = P139; # m106
 NET "led_gsclk"     LOC = P140; # m107
-NET "led_xerr"      LOC = P10;
+NET "led_xerr"      LOC = P10;  # m116
 NET "led_cal_sin"   LOC = P22;
 
 NET "clock"         LOC = P56;  # 40mhz xtal on board

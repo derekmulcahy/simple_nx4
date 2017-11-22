@@ -7,7 +7,6 @@ Current status
 * Minimal ISE project.
 
 #### TODO
-* Synchronize XLAT and BLANK signals. No point in sending grayscale data which overlaps the BLANK.
 * Initialize Dot Correction values.
 * Handle more than one row.
 

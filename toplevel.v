@@ -34,8 +34,8 @@ module toplevel(
 
 	assign status_yellow = blank_count[9];
 	assign status_orange = 0;
-  assign status_red    = led_xerr;
-  assign cpld_p8       = led_blank;
+  assign status_red    = !led_xerr; // XERR is active low
+  assign cpld_p8       = led_blank; // Activate CPLD watchdog
 
   always @(posedge clock) begin
     blank_previous <= led_blank;
