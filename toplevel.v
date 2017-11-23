@@ -14,7 +14,8 @@ module toplevel(
     output cpld_p8,
     output status_yellow,
     output status_orange,
-    output status_red
+    output status_red,
+    output cpld_p2
   );
 
   pixeldriver driver (
@@ -31,13 +32,16 @@ module toplevel(
 
   reg blank_previous    = 0;
   reg [9:0] blank_count = 0;
+  reg [15:0] test_count = 0;
 
 	assign status_yellow = blank_count[9];
 	assign status_orange = 0;
   assign status_red    = !led_xerr; // XERR is active low
   assign cpld_p8       = led_blank; // Activate CPLD watchdog
+  assign cpld_p2       = test_count[15];
 
   always @(posedge clock) begin
+    test_count <= test_count + 1;
     blank_previous <= led_blank;
     if (!blank_previous && led_blank) begin
         blank_count <= blank_count + 1;

@@ -27,14 +27,37 @@ NET "status_orange" LOC = P71 | SLEW = FAST;
 NET "status_yellow" LOC = P60;
 NET "status_red"    LOC = P62;
 
+# Input connector, male, pin 1 is 24V input, pin 6 is GND, pin 9 is unconnected
+#NET "iconn_p2"    LOC = P117; # IN  - I/O: Unrestricted, general-purpose user I/O
+#NET "iconn_p3"    LOC = P120; # IN  - INPUT: Unrestricted, general-purpose input pin
+#NET "iconn_p4"    LOC = P113; # OUT - I/O: Unrestricted, general-purpose user I/O
+#NET "iconn_p5"    LOC = P112; # OUT - I/O: Unrestricted, general-purpose user I/O
+#NET "iconn_p7"    LOC = P116; # IN  - I/O: Unrestricted, general-purpose user I/O
+#NET "iconn_p8"    LOC = P119; # IN  - INPUT: Unrestricted, general-purpose input pin
+
+# Output connector, female, pin 1 is 24V output, pin 2 is GND
+#NET "oconn_p3"    LOC = P134; # OUT - I/O: Unrestricted, general-purpose user I/O
+#NET "oconn_p4"    LOC = P131; # OUT - CLK: User I/O, input, or global buffer input
+#NET "oconn_p5"    LOC = P128; # IN  - CLK: User I/O, input, or global buffer input
+#NET "oconn_p6"    LOC = P135; # OUT - VREF: User I/O or input voltage reference for bank
+#NET "oconn_p7"    LOC = P130; # OUT - CLK: User I/O, input, or global buffer input
+#NET "oconn_p8"    LOC = P129; # IN  - CLK: User I/O, input, or global buffer input
+
 SYSTEM_JITTER = 300 ps;
 
-#NET "cpld_p2"       LOC=P125; # - CLK: User I/O, input, or global buffer input
-#NET "cpld_p3"       LOC=P124; # - VREF: User I/O or input voltage reference for bank
-#NET "cpld_p5"       LOC=P126; # - CLK: User I/O, input, or global buffer input
+NET "cpld_p2"       LOC = P125; # OUT from FPGA - CLK: User I/O, input, or global buffer input
+#NET "cpld_p3"       LOC = P124; # IN to FPGA - VREF: User I/O or input voltage reference for bank
+#NET "cpld_p5"       LOC = P126; # - CLK: User I/O, input, or global buffer input
 #NET "cpld_p6"       LOC = P24;  # m102 - led_l_sout[1] - INPUT: Unrestricted, general-purpose input pin
-NET "cpld_p8"       LOC = P123; # CPLD watchdog - CLK: User I/O, input, or global buffer input
-#NET "cpld_p41"      LOC=P143; # - DUAL: Configuration pin, then possible user I/O
-#NET "cpld_p42"      LOC=P142; # - I/O: Unrestricted, general-purpose user I/O
-#NET "cpld_p43"      LOC=P132; # - I/O: Unrestricted, general-purpose user I/O
-#NET "cpld_p44"      LOC=P23;  # - CLK: User I/O, input, or global buffer input
+NET "cpld_p8"       LOC = P123; # OUT from FPGA - CPLD watchdog - CLK: User I/O, input, or global buffer input
+#NET "cpld_p41"      LOC = P143; # IN to FPGA - DUAL: Configuration pin, then possible user I/O
+#NET "cpld_p42"      LOC = P142; # - I/O: Unrestricted, general-purpose user I/O
+#NET "cpld_p43"      LOC = P132; # - I/O: Unrestricted, general-purpose user I/O
+#NET "cpld_p44"      LOC = P23;  # - CLK: User I/O, input, or global buffer input
+
+# p2, p5, p42, p43 are all low and do not change when the program is reloaded
+# p3 and p41 goes high when the first blank is sent,
+# this transition is synchronized with the rising edge of the blank,
+# it stays high until GSCLK stops, then it goes low.
+# p3 and p41 looks like outputs from CPLD
+
