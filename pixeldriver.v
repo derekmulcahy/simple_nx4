@@ -14,11 +14,11 @@ module pixeldriver(
     output led_gsclk
   );
 
-	reg [5:0]  pixel_count   = 0;	     // 16 pixels per row
-	reg [5:0]  bit_count     = 0;      // 36 bits per pixel
-	reg [2:0]  row_count     = 0;      // 6 rows per frame
+  reg [5:0]  pixel_count   = 0;	     // 16 pixels per row
+  reg [5:0]  bit_count     = 0;      // 36 bits per pixel
+  reg [2:0]  row_count     = 0;      // 6 rows per frame
   reg [2:0]  gsclk_counter = {3{1}}; // Clock counter for gsclk
-	reg [11:0] gsclk_count   = 0;      // gsclk counter for blanking
+  reg [11:0] gsclk_count   = 0;      // gsclk counter for blanking
   reg [2:0]  sclk_counter  = {3{1}}; // Clock counter for gsclk
   reg sclk_stopped = 0;
 
@@ -29,23 +29,23 @@ module pixeldriver(
   assign sclk_strobe  = sclk_counter[2:0] == 0;
   assign led_gsclk    = gsclk_counter[2];
   assign gsclk_strobe = gsclk_counter[2:0] == 0;
-	assign led_blank    = gsclk_count == 0;
+  assign led_blank    = gsclk_count == 0;
   assign pixel        = 36'h0000000C0;
   assign led_l_sin    = {6{pixel[bit_count]}};
   assign led_r_sin    = {6{pixel[bit_count]}};
   assign led_cal_sin  = 0;
   // assign led_xlat     = pixel_count == 0 && bit_count == 0;
 
-	always @(posedge clock)
+  always @(posedge clock)
   begin
     gsclk_counter <= gsclk_counter + 1;
     if (gsclk_strobe) begin
-	    gsclk_count <= gsclk_count + 1;
+      gsclk_count <= gsclk_count + 1;
     end
-	end
+  end
 
-	always @(posedge clock)
-	begin
+  always @(posedge clock)
+  begin
     led_xlat <= 0;
     if (!sclk_stopped) begin
       sclk_counter <= sclk_counter + 1;

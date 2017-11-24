@@ -33,8 +33,8 @@ module toplevel(
   reg blank_previous    = 0;
   reg [9:0] blank_count = 0;
 
-	assign status_yellow = blank_count[9];
-	assign status_orange = 0;
+  assign status_yellow = blank_count[9];
+  assign status_orange = 0;
   assign status_red    = !led_xerr; // XERR is active low
   assign cpld_p8       = led_blank; // Activate CPLD watchdog
   assign cpld_p2       = 1;         // Cycle between rows
