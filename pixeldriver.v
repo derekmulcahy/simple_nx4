@@ -14,15 +14,7 @@ module pixeldriver(
     output led_gsclk
   );
 
-	// 16 x 12 bit words per driver (3 drivers in series, each 16ch; one R,G,B),
-  // so 16*12*3=576 bits per 16-wide column (two columns in parallel)
-
-	// if led_mode=1, you're writing dot correction data, 96 bits (6 bits per pixel bigt endian).
-  // If Mode=0, you're sending 12 bits per pixel greyscale
-	// blanking 0=unblanked, we have to clock a 1 every 4096 greyscale_clocks
-	// gsclk is reference clock for pwm grayscale
-
-	reg [5:0]  pixel_count    = 0;	   // 16 pixels per row
+	reg [5:0]  pixel_count   = 0;	     // 16 pixels per row
 	reg [5:0]  bit_count     = 0;      // 36 bits per pixel
 	reg [2:0]  row_count     = 0;      // 6 rows per frame
   reg [2:0]  gsclk_counter = {3{1}}; // Clock counter for gsclk
