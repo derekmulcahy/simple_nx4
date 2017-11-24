@@ -22,14 +22,15 @@ module pixeldriver(
 	// blanking 0=unblanked, we have to clock a 1 every 4096 greyscale_clocks
 	// gsclk is reference clock for pwm grayscale
 
-  reg [5:0]  frame_count   = 0;      // a frame is 12 bits x 48 words x 6 rows
-	reg [5:0]  word_count    = 0;	     // 48 words per line (3x16)
-	reg [3:0]  bit_count     = 0;      // 12 bits per word
+	reg [5:0]  pixel_count    = 0;	   // 16 pixels per row
+	reg [5:0]  bit_count     = 0;      // 36 bits per pixel
 	reg [2:0]  row_count     = 0;      // 6 rows per frame
   reg [2:0]  gsclk_counter = {3{1}}; // Clock counter for gsclk
 	reg [11:0] gsclk_count   = 0;      // gsclk counter for blanking
   reg [2:0]  sclk_counter  = {3{1}}; // Clock counter for gsclk
   reg sclk_stopped = 0;
+
+  wire [35:0] pixel;
 
   assign led_mode     = 0;
   assign led_sclk     = sclk_counter[2];
@@ -37,11 +38,11 @@ module pixeldriver(
   assign led_gsclk    = gsclk_counter[2];
   assign gsclk_strobe = gsclk_counter[2:0] == 0;
 	assign led_blank    = gsclk_count == 0;
-  assign pixel        = word_count[5:0] == frame_count[5:0];
-  assign led_l_sin    = {6{pixel}};
-  assign led_r_sin    = {6{pixel}};
-  assign led_cal_sin  = pixel;
-  // assign led_xlat     = word_count == 0 && bit_count == 0;
+  assign pixel        = 36'h0000000C0;
+  assign led_l_sin    = {6{pixel[bit_count]}};
+  assign led_r_sin    = {6{pixel[bit_count]}};
+  assign led_cal_sin  = 0;
+  // assign led_xlat     = pixel_count == 0 && bit_count == 0;
 
 	always @(posedge clock)
   begin
@@ -61,20 +62,19 @@ module pixeldriver(
       sclk_stopped <= 0;
     end
     if (sclk_strobe) begin
-      if (bit_count == 11) begin
+      if (bit_count == 35) begin
         bit_count <= 0;
-        if (word_count == 47) begin
-          word_count <= 0;
+        if (pixel_count == 15) begin
+          pixel_count <= 0;
           led_xlat <= 1;
           sclk_stopped <= 1;
           if (row_count == 5) begin
             row_count   <= 0;
-            frame_count <= frame_count + 1;
           end else begin
             row_count <= row_count + 1;
           end
         end else begin
-          word_count <= word_count + 1;
+          pixel_count <= pixel_count + 1;
         end
       end else begin
         bit_count <= bit_count + 1;
