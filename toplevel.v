@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+// Simple test program for Barco NX4 led panels.
+
 module toplevel(
     input clock,
     output led_sclk,
@@ -37,7 +39,7 @@ module toplevel(
   assign status_orange = 0;
   assign status_red    = !led_xerr; // XERR is active low
   assign cpld_p8       = led_blank; // Activate CPLD watchdog
-  assign cpld_p2       = 1;         // Cycle between rows
+  assign cpld_p2       = 1;         // Enable cycling between rows
 
   always @(posedge clock) begin
     blank_previous <= led_blank;
