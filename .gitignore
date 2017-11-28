@@ -1,5 +1,5 @@
 iseconfig
 output_files
-simple_nx4_xdb
-simple_nx4.ipf
+*_xdb
+*.ipf
 _impactbatch.log
