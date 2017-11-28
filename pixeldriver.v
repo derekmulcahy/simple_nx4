@@ -20,7 +20,7 @@ module pixeldriver(
   reg        sclk_stopped  =  0; // sclk runs when data is being sent
   reg [9:0]  bit_count     =  0; // counts 576 grayscale bits or 288 dot-correction bits
 
-  wire [595:0] gs;              // one row of grayscale bits, 12 * 16 * 3
+  wire [575:0] gs;              // one row of grayscale bits, 12 * 16 * 3
   wire [191:0] gsr, gsg, gsb;   // 192 bits for grayscale red, green and blue
   wire [287:0] dc;              // one row of dot-correction bits, 6 * 16 * 3
   wire [95:0]  dcr, dcg, dcb;   // 96 bits for dot-correction red, green and blue
