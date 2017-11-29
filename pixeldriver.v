@@ -19,6 +19,7 @@ module pixeldriver(
   reg [2:0]  sclk_counter  = ~0; // clock counter for sclk
   reg        sclk_stopped  =  0; // sclk runs when data is being sent
   reg [9:0]  bit_count     =  0; // counts 576 grayscale bits or 288 dot-correction bits
+  reg        led_mode_n    =  0; // next value of led_mode
 
   wire [575:0] gs;              // one row of grayscale bits, 12 * 16 * 3
   wire [191:0] gsr, gsg, gsb;   // 192 bits for grayscale red, green and blue
@@ -41,9 +42,9 @@ module pixeldriver(
   // assign gsb          = {16{12'h00F}};
 
   // Grayscale data for BGR vertical stripes
-  assign gsr          = 192'h00000000F00000000F00000000F00000000F00000000F000;
-  assign gsg          = 192'h00000F00000000F00000000F00000000F00000000F000000;
-  assign gsb          = 192'h00F00000000F00000000F00000000F00000000F00000000F;
+  assign gsr          = 192'h000_000_00F_000_000_00F_000_000_00F_000_000_00F_000_000_00F_000;
+  assign gsg          = 192'h000_00F_000_000_00F_000_000_00F_000_000_00F_000_000_00F_000_000;
+  assign gsb          = 192'h00F_000_000_00F_000_000_00F_000_000_00F_000_000_00F_000_000_00F;
 
   assign gs           = {gsr,gsg,gsb};      // assemble a row of the red, green and blue grayscale bits
   assign led_l_sin    = led_mode ? {6{dc[bit_count]}} : {6{gs[bit_count]}}; // select grayscale or dot-correction for mode
@@ -61,6 +62,7 @@ module pixeldriver(
   always @(posedge clock)
   begin
     led_xlat <= 0;
+    led_mode <= led_mode_n;
     if (!sclk_stopped && !led_blank) begin
       sclk_counter <= sclk_counter + 1;
     end
@@ -72,7 +74,7 @@ module pixeldriver(
         bit_count    <= 0;
         sclk_stopped <= led_mode ? 0 : 1;
         led_xlat     <= 1;
-        led_mode     <= 0;
+        led_mode_n   <= !led_mode; // delay the change to the new led_mode by one clock.
       end else begin
         bit_count <= bit_count + 1;
       end
